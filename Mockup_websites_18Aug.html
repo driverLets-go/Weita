@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Talorium — Curated Talent Engagement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=Inter:wght@400;450;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg-paper: #F5EFE6;
+  --surface: #EFE8DC;
+  --surface-2: #E8DFCE;
+  --text-main: #2A2420;
+  --text-muted: #6B615A;
+  --text-soft: #9A8F86;
+  --terracotta: #B85235;
+  --terracotta-2: #8B3F26;
+  --amber: #C47838;
+  --border-line: #DCD3C2;
+  --border-line-soft: #E8DFCE;
+  --ink-card: #1C1815;
+  --ink-card-text: #F5EFE6;
+  --font-serif: 'Newsreader', Georgia, serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg-paper);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.35s ease, color 0.35s ease;
+}
+
+body { font-feature-settings: 'ss01', 'cv11'; }
+.serif { font-family: var(--font-serif); }
+
+/* FIXED HEADER */
+header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: var(--surface);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border-line-soft);
+  transition: background 0.35s ease, border-color 0.35s ease;
+}
+.header-inner {
+  max-width: 1280px; margin: 0 auto; padding: 22px 40px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.brand {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 600;
+  letter-spacing: -0.01em; display: flex; align-items: center; gap: 12px;
+  cursor: pointer; color: var(--text-main);
+}
+.brand-mark {
+  width: 8px; height: 8px; background: var(--terracotta); border-radius: 50%;
+  display: inline-block; transition: background 0.35s ease;
+}
+nav {
+  display: flex; gap: 36px; font-size: 13px; font-weight: 500; color: var(--text-muted);
+}
+nav .nav-item {
+  cursor: pointer; transition: color 0.2s ease; position: relative; padding-bottom: 4px;
+}
+nav .nav-item:hover { color: var(--text-main); }
+nav .nav-item.active {
+  color: var(--text-main); font-weight: 600;
+}
+nav .nav-item.active::after {
+  content: ''; position: absolute; bottom: -6px; left: 0; right: 0; height: 2px;
+  background: var(--terracotta); border-radius: 2px;
+}
+.header-cta {
+  font-size: 13px; padding: 10px 20px; border: 1px solid var(--text-main);
+  border-radius: 100px; background: transparent; color: var(--text-main);
+  cursor: pointer; font-weight: 500; font-family: inherit; transition: all 0.2s ease;
+}
+.header-cta:hover { background: var(--text-main); color: var(--bg-paper); }
+
+/* PALETTE SWITCHER BAR */
+.palette-bar {
+  position: fixed; top: 78px; left: 0; right: 0; z-index: 90;
+  background: var(--surface);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-line);
+  transition: background 0.35s ease, border-color 0.35s ease;
+}
+.palette-inner {
+  max-width: 1280px; margin: 0 auto; padding: 8px 40px;
+  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.palette-group { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.preset {
+  border: 1px solid var(--border-line);
+  background: var(--bg-paper); color: var(--text-main);
+  padding: 5px 14px; border-radius: 100px;
+  cursor: pointer; font-weight: 500; font-size: 11px;
+  transition: all 0.2s ease; font-family: inherit;
+}
+.preset.active { background: var(--terracotta); color: #FFF; border-color: transparent; }
+.btn-reset {
+  border: 1px solid var(--border-line);
+  background: transparent; color: var(--text-muted);
+  padding: 5px 10px; border-radius: 100px; cursor: pointer; font-size: 11px; font-weight: 500;
+  margin-left: 6px; font-family: inherit;
+}
+.btn-reset:hover { background: var(--border-line); color: var(--text-main); }
+.live-controls { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text-muted); }
+.live-controls label { display: flex; align-items: center; gap: 6px; }
+.live-controls input[type=color] { width: 22px; height: 22px; border: none; background: transparent; cursor: pointer; padding: 0; }
+
+/* ROUTING */
+main { position: relative; z-index: 10; padding-top: 125px; }
+
+.view { display: none; }
+.view.active { display: block; animation: fadeIn 0.35s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* HERO WITH TRANSPARENT CONFINED WAVE CANVAS */
+.hero-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-line-soft);
+  background: transparent;
+}
+#heroCanvas {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 1; pointer-events: none;
+}
+.hero {
+  padding: 100px 40px 110px;
+  max-width: 1280px; margin: 0 auto;
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+
+/* TYPOGRAPHY & BUTTONS */
+.eyebrow {
+  font-size: 12px; font-weight: 500; color: var(--terracotta);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 36px; display: inline-flex; align-items: center; gap: 12px;
+}
+.eyebrow::before {
+  content: ''; width: 24px; height: 1px; background: var(--terracotta);
+  display: inline-block;
+}
+.hero h1 {
+  font-family: var(--font-serif); font-weight: 500;
+  font-size: clamp(48px, 6.8vw, 88px); line-height: 1.03;
+  letter-spacing: -0.025em; color: var(--text-main);
+  max-width: 1100px; margin-bottom: 40px;
+}
+.hero h1 em { font-style: italic; font-weight: 400; color: var(--terracotta); }
+.hero-lead {
+  font-size: 20px; line-height: 1.6; color: var(--text-main);
+  max-width: 680px; margin-bottom: 48px; font-weight: 400;
+  opacity: 0.82;
+  position: relative;
+}
+.hero h1 {
+  position: relative;
+}
+/* Subtle halo behind headline and lead so text stays crisp over the canvas strands */
+.hero h1::before,
+.hero-lead::before {
+  content: '';
+  position: absolute;
+  inset: -12px -20px;
+  background: radial-gradient(ellipse at center, var(--bg-paper) 0%, var(--bg-paper) 55%, transparent 100%);
+  opacity: 0.7;
+  z-index: -1;
+  border-radius: 24px;
+  filter: blur(8px);
+  pointer-events: none;
+}
+.hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+
+/* ROTATING TAGLINE — BIG, ONE LINE, HERO TOP */
+.rotating-tagline-hero {
+  margin: 0 auto 40px;
+  max-width: 1100px;
+  font-size: clamp(20px, 2.4vw, 32px);
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+  padding: 8px 20px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.tagline-lead {
+  color: var(--text-muted);
+  font-style: italic;
+  margin-right: 10px;
+}
+.tagline-slot {
+  position: relative;
+  display: inline-block;
+  min-height: 1.3em;
+  min-width: 480px;
+  text-align: left;
+  vertical-align: baseline;
+}
+.tagline-item {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  color: var(--text-main);
+  font-style: italic;
+  white-space: nowrap;
+}
+.tagline-item em {
+  font-style: italic;
+  color: var(--terracotta);
+  font-weight: 500;
+  border-bottom: 2px solid var(--terracotta);
+  padding-bottom: 2px;
+}
+.tagline-item.active {
+  opacity: 1;
+  transform: translateY(0);
+  position: relative;
+}
+
+/* STRIKETHROUGH ROTATOR — pinned to top-right corner, single item cycles */
+.corner-strike {
+  position: absolute;
+  top: 24px;
+  right: 32px;
+  z-index: 3;
+  display: inline-flex;
+  gap: 8px;
+  align-items: baseline;
+  flex-wrap: nowrap;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 500;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+.strike-prefix {
+  color: var(--text-muted);
+  opacity: 0.75;
+}
+.strike-rotator {
+  position: relative;
+  display: inline-block;
+  min-height: 1.2em;
+  min-width: 240px;
+  text-align: left;
+}
+.strike-word {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  text-decoration: line-through;
+  text-decoration-color: var(--terracotta);
+  text-decoration-thickness: 1px;
+  color: var(--text-main);
+  white-space: nowrap;
+}
+.strike-word.active {
+  opacity: 0.9;
+  position: relative;
+}
+
+/* MOBILE — tagline wraps on small screens */
+@media (max-width: 900px) {
+  .rotating-tagline-hero {
+    white-space: normal;
+    font-size: clamp(18px, 4vw, 22px);
+  }
+  .tagline-lead { display: block; margin: 0 0 6px; }
+  .tagline-slot { min-width: 0; width: 100%; text-align: center; display: block; }
+  .tagline-item { white-space: normal; text-align: center; position: absolute; }
+  .tagline-item.active { position: relative; }
+}
+@media (max-width: 720px) {
+  .corner-strike {
+    position: static;
+    justify-content: center;
+    padding: 12px 16px 0;
+    font-size: 9px;
+    gap: 6px;
+    top: auto;
+    right: auto;
+  }
+  .strike-rotator { min-width: 180px; }
+}
+
+/* ================================================ */
+/* SECTION COLOR INVERSION — chapter-based palette flip */
+/* ================================================ */
+
+/* Section variants — using existing palette family only */
+.section-warm {
+  background: var(--bg-paper);
+  color: var(--text-main);
+  transition: background 0.6s ease, color 0.6s ease;
+}
+.section-dark {
+  background: var(--text-main);
+  color: var(--bg-paper);
+  transition: background 0.6s ease, color 0.6s ease;
+}
+.section-dark h1, .section-dark h2, .section-dark h3, .section-dark h4 {
+  color: var(--bg-paper);
+}
+.section-dark .num,
+.section-dark .eyebrow {
+  color: var(--terracotta);
+}
+.section-dark p,
+.section-dark .lead,
+.section-dark .section-head p {
+  color: rgba(250, 248, 245, 0.92);
+}
+.section-dark .comp-card,
+.section-dark .sol-card,
+.section-dark .principle,
+.section-dark .insight-card {
+  background: rgba(250, 248, 245, 0.06);
+  border-color: rgba(250, 248, 245, 0.22);
+}
+.section-dark .comp-card h3,
+.section-dark .sol-card .sol-say,
+.section-dark .principle h4,
+.section-dark .insight-title {
+  color: var(--bg-paper);
+}
+.section-dark .comp-list li {
+  border-color: rgba(250, 248, 245, 0.18);
+}
+.section-dark .comp-list li .label {
+  color: rgba(250, 248, 245, 0.78);
+}
+.section-dark .comp-list li .val {
+  color: var(--bg-paper);
+}
+.section-dark .sol-desc,
+.section-dark .principle p,
+.section-dark .insight-excerpt {
+  color: rgba(250, 248, 245, 0.88);
+}
+.section-dark .btn-ghost {
+  color: var(--bg-paper);
+  border-color: rgba(250, 248, 245, 0.35);
+}
+.section-dark .btn-ghost:hover {
+  background: rgba(250, 248, 245, 0.10);
+  border-color: var(--bg-paper);
+}
+.section-dark .btn-primary {
+  background: var(--terracotta);
+  color: var(--bg-paper);
+}
+.section-dark .btn-primary:hover {
+  background: var(--bg-paper);
+  color: var(--text-main);
+}
+/* Any small captions, hero-meta labels, or muted text in dark sections */
+.section-dark .hero-meta-label,
+.section-dark .insight-meta,
+.section-dark .principle-num,
+.section-dark small {
+  color: rgba(250, 248, 245, 0.75);
+}
+/* Section junction mark — small typographic signature between chapters */
+.section-mark {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+  font-family: 'Newsreader', Georgia, serif;
+  font-style: italic;
+  font-size: 20px;
+  color: var(--terracotta);
+  opacity: 0.6;
+  letter-spacing: 0.4em;
+}
+.btn-primary {
+  background: var(--text-main); color: var(--bg-paper);
+  border: 0; padding: 16px 28px; border-radius: 100px;
+  font-family: inherit; font-size: 14px; font-weight: 500;
+  cursor: pointer; letter-spacing: 0.01em; transition: all 0.25s ease;
+}
+.btn-primary:hover { background: var(--terracotta); color: #FFF; transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent; color: var(--text-main);
+  border: 0; padding: 16px 12px; font-family: inherit;
+  font-size: 14px; font-weight: 500; cursor: pointer;
+  transition: color 0.25s ease; display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-ghost:hover { color: var(--terracotta); }
+.btn-ghost::after { content: '→'; transition: transform 0.25s ease; }
+.btn-ghost:hover::after { transform: translateX(4px); }
+
+/* HERO META */
+.hero-meta {
+  margin-top: 90px; padding-top: 32px;
+  border-top: 1px solid var(--border-line);
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px;
+  width: 100%; max-width: 1000px;
+}
+.hero-meta-item { display: flex; flex-direction: column; gap: 6px; text-align: left; }
+.hero-meta-num {
+  font-family: var(--font-serif); font-weight: 500; font-size: 40px;
+  letter-spacing: -0.02em; color: var(--text-main); line-height: 1;
+}
+.hero-meta-label { font-size: 12px; color: var(--text-muted); letter-spacing: 0.02em; line-height: 1.4; }
+
+/* CHAPTER SECTIONS */
+section.chapter {
+  padding: 140px 40px; max-width: 1280px; margin: 0 auto; position: relative;
+}
+.section-head {
+  display: grid; grid-template-columns: 1fr 2fr; gap: 60px;
+  margin-bottom: 80px; align-items: end;
+}
+.section-head .num {
+  font-family: var(--font-serif); font-weight: 400; font-style: italic;
+  color: var(--terracotta); font-size: 15px; letter-spacing: 0.02em;
+}
+.section-head h2 {
+  font-family: var(--font-serif); font-weight: 500; font-size: clamp(36px, 5vw, 56px);
+  line-height: 1.05; letter-spacing: -0.02em; color: var(--text-main); margin-top: 8px;
+}
+.section-head p { font-size: 17px; line-height: 1.55; color: var(--text-muted); max-width: 560px; }
+
+/* CHAPTER 1: THE INVERSION (FROM MOCKUP) */
+.inversion {
+  background: var(--surface); border-radius: 32px;
+  padding: 80px 60px; position: relative; overflow: hidden;
+}
+.inversion::before {
+  content: ''; position: absolute; top: 0; left: 50%;
+  transform: translateX(-50%); width: 1px; height: 100%;
+  background: linear-gradient(180deg, transparent, var(--border-line), transparent);
+}
+.inversion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; position: relative; }
+.inv-col-label {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.16em;
+  text-transform: uppercase; margin-bottom: 24px;
+}
+.inv-col.old .inv-col-label { color: var(--text-soft); }
+.inv-col.new .inv-col-label { color: var(--terracotta); }
+.inv-col h3 {
+  font-family: var(--font-serif); font-weight: 500; font-size: 32px;
+  letter-spacing: -0.015em; line-height: 1.1; margin-bottom: 40px;
+}
+.inv-col.old h3 { color: var(--text-muted); }
+.inv-col.new h3 { color: var(--text-main); }
+.inv-list { list-style: none; }
+.inv-list li {
+  padding: 20px 0; border-bottom: 1px solid var(--border-line);
+  display: flex; justify-content: space-between; gap: 24px; font-size: 14px;
+}
+.inv-list li:last-child { border-bottom: 0; }
+.inv-list .k { color: var(--text-soft); font-weight: 500; min-width: 130px; }
+.inv-list .v { color: var(--text-main); text-align: right; font-weight: 500; }
+.inv-col.new .inv-list .v { color: var(--text-main); font-weight: 600; }
+
+/* CHAPTER 2: SOLUTIONS (FROM MOCKUP) */
+.solutions-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.solution-card {
+  background: var(--surface); border-radius: 24px; padding: 40px;
+  transition: all 0.3s ease; border: 1px solid transparent; cursor: pointer;
+  position: relative; overflow: hidden;
+}
+.solution-card.wide {
+  grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: center;
+}
+.solution-card:hover {
+  background: var(--surface-2); border-color: var(--border-line); transform: translateY(-2px);
+}
+.sol-index {
+  font-family: var(--font-serif); font-weight: 400; font-style: italic;
+  color: var(--terracotta); font-size: 13px; margin-bottom: 20px; letter-spacing: 0.02em;
+}
+.sol-name {
+  font-family: var(--font-serif); font-weight: 500; font-size: 28px;
+  letter-spacing: -0.015em; color: var(--text-main); margin-bottom: 16px; line-height: 1.1;
+}
+.sol-say {
+  font-family: var(--font-serif); font-style: italic; font-size: 17px;
+  color: var(--terracotta-2); margin-bottom: 20px; line-height: 1.4;
+}
+.sol-desc { font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 24px; }
+.sol-buyer {
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-soft);
+  display: flex; align-items: center; gap: 10px; padding-top: 20px;
+  border-top: 1px solid var(--border-line);
+}
+.sol-buyer::before {
+  content: ''; width: 6px; height: 6px; background: var(--terracotta); border-radius: 50%;
+}
+
+/* CHAPTER 3: ENGINE (OBSIDIAN DARK CONTAINER FROM MOCKUP) */
+.engine {
+  background: var(--ink-card); color: var(--ink-card-text);
+  border-radius: 32px; padding: 80px 60px;
+}
+.engine .section-head h2 { color: var(--ink-card-text); }
+.engine .section-head .num { color: var(--terracotta); }
+.engine .section-head p { color: rgba(255, 255, 255, 0.6); }
+.engine-flow {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 20px;
+}
+.engine-phase { position: relative; }
+.engine-phase:not(:last-child)::after {
+  content: ''; position: absolute; right: -20px; top: 8px;
+  width: 1px; height: 100%; background: rgba(255,255,255,0.1);
+}
+.phase-label {
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--terracotta); margin-bottom: 20px; font-weight: 500;
+}
+.phase-title {
+  font-family: var(--font-serif); font-weight: 500; font-size: 24px;
+  color: var(--ink-card-text); margin-bottom: 20px; letter-spacing: -0.01em;
+}
+.phase-list { list-style: none; }
+.phase-list li {
+  padding: 14px 0; color: rgba(255,255,255,0.65); font-size: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.08); line-height: 1.5;
+}
+.phase-list li:last-child { border-bottom: 0; }
+
+/* CHAPTER 4: CATEGORY QUOTES (FROM MOCKUP) */
+.insight-strip {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; padding: 40px 0;
+}
+.insight-block { padding: 40px; border-left: 2px solid var(--terracotta); background: var(--surface); border-radius: 0 20px 20px 0; }
+.insight-quote {
+  font-family: var(--font-serif); font-style: italic; font-weight: 400;
+  font-size: 24px; line-height: 1.35; color: var(--text-main); margin-bottom: 24px;
+  letter-spacing: -0.005em;
+}
+.insight-attribution { font-size: 12px; color: var(--text-muted); letter-spacing: 0.02em; }
+
+/* CHAPTER 5: PRINCIPLES (FROM MOCKUP WITH DASHED 6TH CARD) */
+.principles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.principle {
+  padding: 40px; background: var(--surface); border-radius: 20px;
+  display: grid; grid-template-columns: 60px 1fr; gap: 24px; transition: all 0.25s ease;
+}
+.principle:hover { background: var(--surface-2); }
+.p-num {
+  font-family: var(--font-serif); font-weight: 400; font-style: italic;
+  font-size: 32px; color: var(--terracotta); line-height: 1;
+}
+.p-content h4 {
+  font-family: var(--font-serif); font-weight: 500; font-size: 20px;
+  color: var(--text-main); margin-bottom: 12px; letter-spacing: -0.005em; line-height: 1.25;
+}
+.p-content p { font-size: 14px; line-height: 1.55; color: var(--text-muted); }
+
+/* CHAPTER 6: RECENT THINKING (FROM MOCKUP) */
+.insights-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.insight-card {
+  border-top: 1px solid var(--border-line); padding-top: 24px;
+  cursor: pointer; transition: all 0.25s ease;
+}
+.insight-card:hover { border-top-color: var(--terracotta); }
+.insight-tag {
+  font-size: 11px; color: var(--terracotta); letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 16px; font-weight: 500;
+}
+.insight-title {
+  font-family: var(--font-serif); font-weight: 500; font-size: 22px;
+  color: var(--text-main); line-height: 1.2; margin-bottom: 16px; letter-spacing: -0.01em;
+}
+.insight-meta { font-size: 12px; color: var(--text-soft); display: flex; gap: 12px; align-items: center; }
+.insight-meta span::after { content: '·'; margin-left: 12px; color: var(--border-line); }
+.insight-meta span:last-child::after { content: ''; }
+
+/* CTA STRIP (FROM MOCKUP) */
+.cta-strip {
+  background: var(--terracotta); color: #fff; border-radius: 32px;
+  padding: 100px 60px; text-align: center; position: relative; overflow: hidden;
+}
+.cta-eyebrow {
+  font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(255,255,255,0.7); margin-bottom: 32px; font-weight: 500;
+}
+.cta-strip h2 {
+  font-family: var(--font-serif); font-weight: 500; font-size: clamp(36px, 5vw, 56px);
+  line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 32px;
+  max-width: 800px; margin-left: auto; margin-right: auto; color: #fff;
+}
+.cta-strip h2 em { font-style: italic; font-weight: 400; color: #fff; }
+.cta-strip p {
+  font-size: 17px; color: rgba(255,255,255,0.85); margin-bottom: 48px;
+  max-width: 560px; margin-left: auto; margin-right: auto; line-height: 1.55;
+}
+.cta-strip .btn-primary { background: #fff; color: var(--terracotta); }
+.cta-strip .btn-primary:hover { background: var(--text-main); color: #fff; }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border-line); padding: 60px 40px 40px;
+  max-width: 1280px; margin: 100px auto 0;
+}
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+.footer-brand p { font-size: 14px; color: var(--text-muted); line-height: 1.6; max-width: 360px; margin-top: 16px; }
+.footer-col h5 {
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-soft); margin-bottom: 20px; font-weight: 500;
+}
+.footer-col a {
+  display: block; color: var(--text-main); text-decoration: none;
+  font-size: 14px; padding: 6px 0; transition: color 0.2s ease; cursor: pointer;
+}
+.footer-col a:hover { color: var(--terracotta); }
+.footer-bottom {
+  padding-top: 32px; border-top: 1px solid var(--border-line);
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; color: var(--text-soft);
+}
+
+@media (max-width: 900px) {
+  .header-inner { padding: 18px 20px; }
+  nav { display: none; }
+  .hero { padding: 80px 20px 60px; }
+  .hero-meta { grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 60px; }
+  .section-head { grid-template-columns: 1fr; gap: 20px; margin-bottom: 40px; }
+  section.chapter { padding: 80px 20px; }
+  .inversion { padding: 40px 24px; }
+  .inversion-grid { grid-template-columns: 1fr; gap: 40px; }
+  .solutions-grid { grid-template-columns: 1fr; }
+  .solution-card.wide { grid-column: span 1; grid-template-columns: 1fr; gap: 20px; }
+  .engine { padding: 40px 24px; }
+  .engine-flow { grid-template-columns: 1fr; gap: 32px; }
+  .engine-phase:not(:last-child)::after { display: none; }
+  .principles { grid-template-columns: 1fr; }
+  .insights-grid { grid-template-columns: 1fr; gap: 32px; }
+  .cta-strip { padding: 60px 24px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .insight-strip { grid-template-columns: 1fr; gap: 24px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand" data-view="home"><span class="brand-mark"></span>Talorium</div>
+    <nav>
+      <span class="nav-item active" data-view="home">Home</span>
+      <span class="nav-item" data-view="solutions">Solutions</span>
+      <span class="nav-item" data-view="product">Product</span>
+      <span class="nav-item" data-view="category">New Category</span>
+      <span class="nav-item" data-view="insights">Insights</span>
+      <span class="nav-item" data-view="about">About</span>
+    </nav>
+    <button class="header-cta">Request an Introduction</button>
+  </div>
+</header>
+
+<div class="palette-bar">
+  <div class="palette-inner">
+    <div class="palette-group">
+      <button class="preset active" data-preset="porcelain">Warm Porcelain</button>
+      <button class="preset" data-preset="slate">Midnight Slate</button>
+      <button class="preset" data-preset="amber">Warm Amber</button>
+      <button class="preset" data-preset="white">Pure White</button>
+      <button class="btn-reset" id="resetBtn">↺ Reset Controls</button>
+    </div>
+    <div class="live-controls">
+      <label>Terracotta: <input type="color" id="terracottaPicker" value="#B85235"></label>
+      <label>Amber: <input type="color" id="amberPicker" value="#C47838"></label>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ==================== HOME TAB (FULL MOCKUP EXPERIENCE) ==================== -->
+  <div class="view active" id="view-home">
+    <div class="hero-wrapper">
+      <canvas id="heroCanvas"></canvas>
+
+      <!-- STRIKETHROUGH ROTATOR — small, pinned corner, cycles through what we're not -->
+      <div class="corner-strike">
+        <span class="strike-prefix">We are</span>
+        <span class="strike-rotator" id="strikeRotator">
+          <span class="strike-word active">not a recruitment firm</span>
+          <span class="strike-word">not an executive search agency</span>
+          <span class="strike-word">not an outsourced hiring desk</span>
+          <span class="strike-word">not a staffing agency</span>
+          <span class="strike-word">not a talent platform</span>
+          <span class="strike-word">not a consulting practice</span>
+        </span>
+      </div>
+
+      <section class="hero">
+
+        <!-- ROTATING TAGLINE — BIG, ONE LINE, TOP -->
+        <div class="rotating-tagline-hero serif">
+          <span class="tagline-lead">Conversation is the language we</span>
+          <span class="tagline-slot" id="taglineSlot">
+            <span class="tagline-item active"><em>connect</em> your business with talent.</span>
+            <span class="tagline-item"><em>connect</em> your leadership with the market.</span>
+            <span class="tagline-item"><em>reimagine</em> your growth.</span>
+            <span class="tagline-item"><em>build</em> your visibility in the market.</span>
+            <span class="tagline-item"><em>compound</em> your talent advantage.</span>
+          </span>
+        </div>
+
+        <!-- HEADLINE — business + talent + conversational -->
+        <h1 class="serif">Where <em>business context</em> meets <em>real talent</em> — in one designed conversation.</h1>
+
+        <p class="hero-lead">
+          A curated practice for founders, boards, and talent leaders. We work through conversation — with you, with the market, with the professionals who fit — so decisions arrive with the conviction they deserve.
+        </p>
+
+        <div class="hero-actions">
+          <button class="btn-primary">Request an Introduction</button>
+          <button class="btn-ghost" data-goto="solutions">Explore the model</button>
+        </div>
+
+        <div class="hero-meta">
+          <div class="hero-meta-item">
+            <div class="hero-meta-num serif">01</div>
+            <div class="hero-meta-label">One curated day replaces months of screening</div>
+          </div>
+          <div class="hero-meta-item">
+            <div class="hero-meta-num serif">30–300</div>
+            <div class="hero-meta-label">Pre-vetted professionals your leaders meet directly</div>
+          </div>
+          <div class="hero-meta-item">
+            <div class="hero-meta-num serif">Bespoke</div>
+            <div class="hero-meta-label">Every engagement designed for your context</div>
+          </div>
+          <div class="hero-meta-item">
+            <div class="hero-meta-num serif">∞</div>
+            <div class="hero-meta-label">A community that compounds over every engagement</div>
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+    <!-- CHAPTER ONE: THE INVERSION -->
+    <section class="chapter" id="chapter-inversion">
+      <div class="section-head">
+        <div>
+          <div class="num serif">Chapter One</div>
+          <h2 class="serif">The inversion</h2>
+        </div>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+      </div>
+
+      <div class="inversion">
+        <div class="inversion-grid">
+          <div class="inv-col old">
+            <div class="inv-col-label">The Traditional Funnel</div>
+            <h3 class="serif">Leaders judged last</h3>
+            <ul class="inv-list">
+              <li><span class="k">Leadership touchpoint</span><span class="v">Day 60+</span></li>
+              <li><span class="k">Candidate posture</span><span class="v">Processed supplicant</span></li>
+              <li><span class="k">Evaluation lens</span><span class="v">Keyword & resume</span></li>
+              <li><span class="k">Funnel decay</span><span class="v">50–90% per stage</span></li>
+              <li><span class="k">Organizing principle</span><span class="v">Roles and JDs</span></li>
+              <li><span class="k">What remains after</span><span class="v">A rebuilt funnel</span></li>
+            </ul>
+          </div>
+          <div class="inv-col new">
+            <div class="inv-col-label">Curated Talent Engagement</div>
+            <h3 class="serif">Leaders convene first</h3>
+            <ul class="inv-list">
+              <li><span class="k">Leadership touchpoint</span><span class="v">Day one, direct</span></li>
+              <li><span class="k">Candidate posture</span><span class="v">Peer & specialist</span></li>
+              <li><span class="k">Evaluation lens</span><span class="v">Direct experience</span></li>
+              <li><span class="k">Funnel decay</span><span class="v">Zero — no funnel</span></li>
+              <li><span class="k">Organizing principle</span><span class="v">Skills and craft</span></li>
+              <li><span class="k">What remains after</span><span class="v">A compounding community</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER TWO: SOLUTIONS -->
+    <section class="chapter">
+      <div class="section-head">
+        <div>
+          <div class="num serif">Chapter Two</div>
+          <h2 class="serif">Five ways to enter</h2>
+        </div>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+      </div>
+
+      <div class="solutions-grid">
+        <div class="solution-card">
+          <div class="sol-index serif">Configuration i.</div>
+          <div class="sol-name serif">Pipeline</div>
+          <div class="sol-say serif">"We need to hire specific people, fast."</div>
+          <div class="sol-desc">A skill-matched pool of pre-vetted professionals convened for your leadership to meet directly. Post-engagement acceleration for mutual-interest conversations.</div>
+          <div class="sol-buyer">CHRO · TA Head · Hiring Leader</div>
+        </div>
+
+        <div class="solution-card">
+          <div class="sol-index serif">Configuration ii.</div>
+          <div class="sol-name serif">Brand</div>
+          <div class="sol-say serif">"We need to be known before we hire."</div>
+          <div class="sol-desc">An industry-summit format that positions your leadership as thought leaders in a specific talent community — building visibility, trust, and inbound gravity before roles are opened.</div>
+          <div class="sol-buyer">CHRO · CMO · Founding Team</div>
+        </div>
+
+        <div class="solution-card">
+          <div class="sol-index serif">Configuration iii.</div>
+          <div class="sol-name serif">Re-Imagine</div>
+          <div class="sol-say serif">"Our hiring process is broken."</div>
+          <div class="sol-desc">A diagnostic and redesign engagement. We audit the current funnel, identify the friction points, and rebuild the hiring architecture around engagement-based assessment.</div>
+          <div class="sol-buyer">CHRO · COO · TA Head</div>
+        </div>
+
+        <div class="solution-card">
+          <div class="sol-index serif">Configuration iv.</div>
+          <div class="sol-name serif">Diagnose</div>
+          <div class="sol-say serif">"We don't know what we need yet."</div>
+          <div class="sol-desc">A leadership exposure engagement. Your CXOs experience multiple skill domains firsthand before defining what to hire — because clarity precedes commitment.</div>
+          <div class="sol-buyer">CEO · Founder · COO</div>
+        </div>
+
+        <div class="solution-card wide">
+          <div>
+            <div class="sol-index serif">Configuration v.</div>
+            <div class="sol-name serif">Scale-Up</div>
+            <div class="sol-say serif">"We just closed funding. Build the team."</div>
+          </div>
+          <div>
+            <div class="sol-desc">A multi-function engagement — GTM, product, engineering, operations, finance — in a single curated day. Founders develop firsthand understanding of every function before hiring.</div>
+            <div class="sol-buyer">Founder · CEO · COO</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER THREE: ENGINE -->
+    <section class="chapter">
+      <div class="engine">
+        <div class="section-head">
+          <div>
+            <div class="num serif">Chapter Three</div>
+            <h2 class="serif">The engagement engine</h2>
+          </div>
+          <p>All five configurations share one operational engine. What varies is the shape of the engagement; what remains constant is the standard of curation, direct access, and community continuity.</p>
+        </div>
+
+        <div class="engine-flow">
+          <div class="engine-phase">
+            <div class="phase-label">Phase One</div>
+            <div class="phase-title serif">Curation</div>
+            <ul class="phase-list">
+              <li>Read the leadership brief in depth</li>
+              <li>Map to the right configuration</li>
+              <li>Pre-vet the professional pool</li>
+              <li>Prepare intelligence dossiers</li>
+              <li>Brief leadership before entry</li>
+            </ul>
+          </div>
+          <div class="engine-phase">
+            <div class="phase-label">Phase Two</div>
+            <div class="phase-title serif">Convergence</div>
+            <ul class="phase-list">
+              <li>One designed day, in person</li>
+              <li>30–300 professionals present</li>
+              <li>Structured peer-level engagement</li>
+              <li>Real dialogue, not interview</li>
+              <li>Both sides experience each other</li>
+            </ul>
+          </div>
+          <div class="engine-phase">
+            <div class="phase-label">Phase Three</div>
+            <div class="phase-title serif">Continuity</div>
+            <ul class="phase-list">
+              <li>Accelerate mutual-interest paths</li>
+              <li>Deliver engagement intelligence</li>
+              <li>Professionals join the community</li>
+              <li>Ongoing peer and insight access</li>
+              <li>The moat compounds</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER FOUR: INSIGHT / CATEGORY POV -->
+    <section class="chapter">
+      <div class="section-head">
+        <div>
+          <div class="num serif">Chapter Four</div>
+          <h2 class="serif">A new category, spoken plainly</h2>
+        </div>
+        <p>Talorium does not describe itself in the vocabulary of recruitment. The language we've inherited from the funnel era cannot carry what happens in the room. Two ideas worth reading twice:</p>
+      </div>
+
+      <div class="insight-strip">
+        <div class="insight-block">
+          <p class="insight-quote serif">"The right talent decision is not a decision at all. It is a recognition — the moment two sides know they belong together."</p>
+          <p class="insight-attribution">— Founding Thesis, Chapter Two</p>
+        </div>
+        <div class="insight-block">
+          <p class="insight-quote serif">"Talent is invisible until experienced firsthand. Every process ever built assumed the opposite. That is the mistake we are correcting."</p>
+          <p class="insight-attribution">— Founding Thesis, Chapter One</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER FIVE: PRINCIPLES -->
+    <section class="chapter">
+      <div class="section-head">
+        <div>
+          <div class="num serif">Chapter Five</div>
+          <h2 class="serif">What we will not compromise</h2>
+        </div>
+        <p>Five commitments that define how this business is built — and what it refuses to become as it grows.</p>
+      </div>
+
+      <div class="principles">
+        <div class="principle">
+          <div class="p-num serif">i.</div>
+          <div class="p-content">
+            <h4 class="serif">The language of engagement, not recruitment</h4>
+            <p>We build genuine hiring capability. We describe it in the vocabulary of engagement, curation, and community — because that is what makes it work.</p>
+          </div>
+        </div>
+        <div class="principle">
+          <div class="p-num serif">ii.</div>
+          <div class="p-content">
+            <h4 class="serif">The professional is a member, not a product</h4>
+            <p>Professionals in our engagements are respected community members — informed, valued, and never treated as inventory to be moved.</p>
+          </div>
+        </div>
+        <div class="principle">
+          <div class="p-num serif">iii.</div>
+          <div class="p-content">
+            <h4 class="serif">Day one is the promise and the metric</h4>
+            <p>The quality of what happens on the designed day is the single most important measure we hold ourselves to. Every internal review returns to it.</p>
+          </div>
+        </div>
+        <div class="principle">
+          <div class="p-num serif">iv.</div>
+          <div class="p-content">
+            <h4 class="serif">Transparency is a business decision</h4>
+            <p>Every engagement is honest about its intent. No engagement disguises itself as something else. Trust broken once is trust broken across the community.</p>
+          </div>
+        </div>
+        <div class="principle">
+          <div class="p-num serif">v.</div>
+          <div class="p-content">
+            <h4 class="serif">The community is the moat — protect it above revenue</h4>
+            <p>Every operational decision is tested against one question: does this strengthen the community or weaken it? We decline revenue that damages long-term community strength.</p>
+          </div>
+        </div>
+        <div class="principle" style="background:transparent;border:1px dashed var(--border-line);">
+          <div class="p-num serif" style="color:var(--text-soft);">+</div>
+          <div class="p-content">
+            <h4 class="serif" style="color:var(--text-muted);">Additional commitments emerge as we build</h4>
+            <p>This is a working list. As we run more engagements and learn more, new principles will be added — never removed lightly.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER SIX: INSIGHTS -->
+    <section class="chapter">
+      <div class="section-head">
+        <div>
+          <div class="num serif">Chapter Six</div>
+          <h2 class="serif">Recent thinking</h2>
+        </div>
+        <p>Essays, research, and field notes from our work. Written for CHROs, founders, and leadership teams building teams in a market that has changed underneath the old playbook.</p>
+      </div>
+
+      <div class="insights-grid">
+        <div class="insight-card">
+          <div class="insight-tag">Field Note</div>
+          <h3 class="insight-title serif">Why the recruiter-candidate understanding gap is a structural failure — not a training problem</h3>
+          <div class="insight-meta"><span>8 min read</span><span>Founding Thesis</span></div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-tag">Research</div>
+          <h3 class="insight-title serif">From roles to skills: what changed in Indian hiring between 2022 and 2026</h3>
+          <div class="insight-meta"><span>12 min read</span><span>Market Study</span></div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-tag">Essay</div>
+          <h3 class="insight-title serif">The founder who has never met a great product manager: on hiring blind in unfamiliar functions</h3>
+          <div class="insight-meta"><span>6 min read</span><span>Scale-Up Series</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA STRIP -->
+    <section class="chapter">
+      <div class="cta-strip">
+        <div class="cta-eyebrow">By invitation and warm introduction</div>
+        <h2 class="serif">If your leadership is <em>building a team</em>, we should talk.</h2>
+        <p>Talorium works with a small number of organizations at a time. Every engagement is designed personally. If the model resonates with how you think about talent, request an introduction and we will be in touch.</p>
+        <button class="btn-primary">Request an Introduction</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== SOLUTIONS TAB ==================== -->
+  <div class="view" id="view-solutions">
+    <section class="chapter">
+      <div class="section-head">
+        <div>
+          <div class="num serif">Chapter Two</div>
+          <h2 class="serif">Five ways to enter</h2>
+        </div>
+        <p>One engagement engine — assembled differently based on what your organization is solving for.</p>
+      </div>
+      <div class="solutions-grid">
+        <div class="solution-card">
+          <div class="sol-index serif">Configuration i.</div>
+          <div class="sol-name serif">Pipeline</div>
+          <div class="sol-say serif">"We need to hire specific people, fast."</div>
+          <div class="sol-desc">A skill-matched pool of pre-vetted professionals convened for your leadership to meet directly.</div>
+          <div class="sol-buyer">CHRO · TA Head · Hiring Leader</div>
+        </div>
+        <div class="solution-card">
+          <div class="sol-index serif">Configuration ii.</div>
+          <div class="sol-name serif">Brand</div>
+          <div class="sol-say serif">"We need to be known before we hire."</div>
+          <div class="sol-desc">An industry-summit format positioning your leadership as thought leaders in a specific talent community.</div>
+          <div class="sol-buyer">CHRO · CMO · Founding Team</div>
+        </div>
+        <div class="solution-card">
+          <div class="sol-index serif">Configuration iii.</div>
+          <div class="sol-name serif">Re-Imagine</div>
+          <div class="sol-say serif">"Our hiring process is broken."</div>
+          <div class="sol-desc">A diagnostic and redesign engagement to audit friction points and rebuild hiring architecture.</div>
+          <div class="sol-buyer">CHRO · COO · TA Head</div>
+        </div>
+        <div class="solution-card">
+          <div class="sol-index serif">Configuration iv.</div>
+          <div class="sol-name serif">Diagnose</div>
+          <div class="sol-say serif">"We don't know what we need yet."</div>
+          <div class="sol-desc">A leadership exposure engagement to experience skill domains firsthand before defining headcount.</div>
+          <div class="sol-buyer">CEO · Founder · COO</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== PRODUCT TAB ==================== -->
+  <div class="view" id="view-product">
+    <section class="chapter">
+      <div class="engine">
+        <div class="section-head">
+          <div>
+            <div class="num serif">Chapter Three</div>
+            <h2 class="serif">The engagement engine</h2>
+          </div>
+          <p>Operational standard of curation and direct leadership access.</p>
+        </div>
+        <div class="engine-flow">
+          <div class="engine-phase">
+            <div class="phase-label">Phase One</div>
+            <div class="phase-title serif">Curation</div>
+            <ul class="phase-list">
+              <li>Read the leadership brief in depth</li>
+              <li>Map to the right configuration</li>
+              <li>Pre-vet the professional pool</li>
+            </ul>
+          </div>
+          <div class="engine-phase">
+            <div class="phase-label">Phase Two</div>
+            <div class="phase-title serif">Convergence</div>
+            <ul class="phase-list">
+              <li>One designed day, in person</li>
+              <li>Structured peer-level engagement</li>
+              <li>Real dialogue, not interview</li>
+            </ul>
+          </div>
+          <div class="engine-phase">
+            <div class="phase-label">Phase Three</div>
+            <div class="phase-title serif">Continuity</div>
+            <ul class="phase-list">
+              <li>Accelerate mutual-interest paths</li>
+              <li>Professionals join community</li>
+              <li>The moat compounds</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== CATEGORY TAB ==================== -->
+  <div class="view" id="view-category">
+    <section class="chapter">
+      <div class="section-head">
+        <div>
+          <div class="num serif">Chapter Four</div>
+          <h2 class="serif">A new category, spoken plainly</h2>
+        </div>
+      </div>
+      <div class="insight-strip">
+        <div class="insight-block">
+          <p class="insight-quote serif">"The right talent decision is not a decision at all. It is a recognition — the moment two sides know they belong together."</p>
+          <p class="insight-attribution">— Founding Thesis, Chapter Two</p>
+        </div>
+        <div class="insight-block">
+          <p class="insight-quote serif">"Talent is invisible until experienced firsthand. Every process ever built assumed the opposite. That is the mistake we are correcting."</p>
+          <p class="insight-attribution">— Founding Thesis, Chapter One</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== INSIGHTS TAB ==================== -->
+  <div class="view" id="view-insights">
+    <section class="chapter">
+      <div class="section-head">
+        <div>
+          <div class="num serif">Chapter Six</div>
+          <h2 class="serif">Recent thinking</h2>
+        </div>
+      </div>
+      <div class="insights-grid">
+        <div class="insight-card">
+          <div class="insight-tag">Field Note</div>
+          <h3 class="insight-title serif">Why the recruiter-candidate understanding gap is a structural failure — not a training problem</h3>
+          <div class="insight-meta"><span>8 min read</span><span>Founding Thesis</span></div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-tag">Research</div>
+          <h3 class="insight-title serif">From roles to skills: what changed in Indian hiring between 2022 and 2026</h3>
+          <div class="insight-meta"><span>12 min read</span><span>Market Study</span></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== ABOUT TAB ==================== -->
+  <div class="view" id="view-about">
+    <section class="chapter">
+      <div class="section-head">
+        <div>
+          <div class="num serif">Chapter Five</div>
+          <h2 class="serif">What we will not compromise</h2>
+        </div>
+      </div>
+      <div class="principles">
+        <div class="principle">
+          <div class="p-num serif">i.</div>
+          <div class="p-content">
+            <h4 class="serif">The language of engagement, not recruitment</h4>
+            <p>We build genuine hiring capability. We describe it in the vocabulary of engagement, curation, and community.</p>
+          </div>
+        </div>
+        <div class="principle">
+          <div class="p-num serif">ii.</div>
+          <div class="p-content">
+            <h4 class="serif">The professional is a member, not a product</h4>
+            <p>Professionals in our engagements are respected community members — informed, valued, and never treated as inventory.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="brand"><span class="brand-mark"></span>Talorium</div>
+      <p>A curated talent engagement company. A Peepal Consulting venture. Based in Bengaluru, working across India.</p>
+    </div>
+    <div class="footer-col">
+      <h5>The Model</h5>
+      <a data-goto="home">The Inversion</a>
+      <a data-goto="product">Engagement Engine</a>
+      <a data-goto="category">Founding Thesis</a>
+      <a data-goto="about">Principles</a>
+    </div>
+    <div class="footer-col">
+      <h5>Solutions</h5>
+      <a data-goto="solutions">Pipeline</a>
+      <a data-goto="solutions">Brand</a>
+      <a data-goto="solutions">Re-Imagine</a>
+      <a data-goto="solutions">Diagnose</a>
+      <a data-goto="solutions">Scale-Up</a>
+    </div>
+    <div class="footer-col">
+      <h5>Talorium</h5>
+      <a data-goto="insights">Insights</a>
+      <a data-goto="about">About</a>
+      <a>Request Introduction</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 Talorium · A Peepal Consulting Venture</div>
+    <div>Bengaluru · India</div>
+  </div>
+</footer>
+
+<script>
+const root = document.documentElement;
+
+// ============ PALETTE DEFINITIONS (MOCKUP ACCURACY) ============
+const presets = {
+  porcelain: {
+    bg: '#F5EFE6',
+    surface: '#EFE8DC',
+    surface2: '#E8DFCE',
+    text: '#2A2420',
+    muted: '#6B615A',
+    soft: '#9A8F86',
+    terracotta: '#B85235',
+    amber: '#C47838',
+    border: '#DCD3C2',
+    borderSoft: '#E8DFCE',
+    inkCard: '#1C1815',
+    inkCardText: '#F5EFE6'
+  },
+  slate: {
+    bg: '#141A22',
+    surface: '#1E2632',
+    surface2: '#283344',
+    text: '#F2EFF8',
+    muted: '#A5B2C2',
+    soft: '#748294',
+    terracotta: '#E07A5F',
+    amber: '#F2B86E',
+    border: 'rgba(255,255,255,0.12)',
+    borderSoft: 'rgba(255,255,255,0.06)',
+    inkCard: '#0C1017',
+    inkCardText: '#F2EFF8'
+  },
+  amber: {
+    bg: '#1D1712',
+    surface: '#2B231B',
+    surface2: '#3A2F25',
+    text: '#FAF2EB',
+    muted: '#B8A899',
+    soft: '#857668',
+    terracotta: '#E68E58',
+    amber: '#F4BA70',
+    border: 'rgba(255,255,255,0.12)',
+    borderSoft: 'rgba(255,255,255,0.06)',
+    inkCard: '#120D09',
+    inkCardText: '#FAF2EB'
+  },
+  white: {
+    bg: '#FFFFFF',
+    surface: '#F6F5F2',
+    surface2: '#ECEAE4',
+    text: '#1C1B1A',
+    muted: '#6E6C68',
+    soft: '#9C9A94',
+    terracotta: '#B85235',
+    amber: '#C47838',
+    border: '#E4E2DC',
+    borderSoft: '#EEECE6',
+    inkCard: '#1A1A1A',
+    inkCardText: '#FFFFFF'
+  }
+};
+
+let activePreset = 'porcelain';
+let terracotta = presets.porcelain.terracotta;
+let amber = presets.porcelain.amber;
+
+function applyTheme(pKey) {
+  activePreset = pKey;
+  const p = presets[pKey];
+  root.style.setProperty('--bg-paper', p.bg);
+  root.style.setProperty('--surface', p.surface);
+  root.style.setProperty('--surface-2', p.surface2);
+  root.style.setProperty('--text-main', p.text);
+  root.style.setProperty('--text-muted', p.muted);
+  root.style.setProperty('--text-soft', p.soft);
+  root.style.setProperty('--terracotta', p.terracotta);
+  root.style.setProperty('--amber', p.amber);
+  root.style.setProperty('--border-line', p.border);
+  root.style.setProperty('--border-line-soft', p.borderSoft);
+  root.style.setProperty('--ink-card', p.inkCard);
+  root.style.setProperty('--ink-card-text', p.inkCardText);
+  terracotta = p.terracotta;
+  amber = p.amber;
+  document.getElementById('terracottaPicker').value = p.terracotta.startsWith('#') ? p.terracotta : '#B85235';
+  document.getElementById('amberPicker').value = p.amber.startsWith('#') ? p.amber : '#C47838';
+}
+
+document.querySelectorAll('.preset').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyTheme(btn.dataset.preset);
+  });
+});
+
+document.getElementById('terracottaPicker').addEventListener('input', e => {
+  terracotta = e.target.value;
+  root.style.setProperty('--terracotta', terracotta);
+});
+document.getElementById('amberPicker').addEventListener('input', e => {
+  amber = e.target.value;
+  root.style.setProperty('--amber', amber);
+});
+document.getElementById('resetBtn').addEventListener('click', () => applyTheme(activePreset));
+
+// ============ TAB NAVIGATION ============
+function showView(viewId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const view = document.getElementById('view-' + viewId);
+  if (view) view.classList.add('active');
+  const nav = document.querySelector('.nav-item[data-view="' + viewId + '"]');
+  if (nav) nav.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.querySelectorAll('[data-view]').forEach(el => el.addEventListener('click', () => showView(el.dataset.view)));
+document.querySelectorAll('[data-goto]').forEach(el => el.addEventListener('click', () => showView(el.dataset.goto)));
+
+// ============ EXACT SOURCE 1 CANVAS INGESTION (CONFINED TO HERO) ============
+const canvas = document.getElementById('heroCanvas');
+const ctx = canvas.getContext('2d');
+const heroWrapper = document.querySelector('.hero-wrapper');
+
+function resizeCanvas() {
+  const rect = heroWrapper.getBoundingClientRect();
+  canvas.width = rect.width * devicePixelRatio;
+  canvas.height = rect.height * devicePixelRatio;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = rect.height + 'px';
+  ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+  // Rescatter strand vertical offsets — keep them within the middle 70% band (15% top blank, 15% bottom blank)
+  if (typeof window.__strands !== 'undefined' && window.__strands.length) {
+    const BAND_START = 0.15;
+    const BAND_END   = 0.85;
+    for (const s of window.__strands) {
+      const yWithinBand = BAND_START * rect.height + Math.random() * (BAND_END - BAND_START) * rect.height;
+      s.offsetY = yWithinBand - rect.height / 2;
+    }
+  }
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+const strands = [];
+window.__strands = strands;
+const STRAND_COUNT = 220;
+
+// Vertical coverage band: middle 70% of hero (top 15% blank, bottom 15% blank)
+const BAND_START = 0.15;
+const BAND_END   = 0.85;
+
+for (let i = 0; i < STRAND_COUNT; i++) {
+  const isLeft = i % 2 === 0;
+  const heroHeight = heroWrapper.getBoundingClientRect().height;
+  // Place strand within the middle band only. offsetY is relative to hero center (cy = h/2).
+  // Random position within [BAND_START * h, BAND_END * h], then subtract cy to convert to offset.
+  const yWithinBand = BAND_START * heroHeight + Math.random() * (BAND_END - BAND_START) * heroHeight;
+  const offsetY = yWithinBand - heroHeight / 2;
+  strands.push({
+    isLeft: isLeft,
+    offsetY: offsetY,
+    amp: 15 + Math.random() * 55,       // reduced amplitude so waves stay within band
+    phase: Math.random() * Math.PI * 2,
+    speed: 0.08 + Math.random() * 0.32,
+    width: 0.35 + Math.random() * 1.1,
+    alpha: 0.025 + Math.random() * 0.13
+  });
+}
+// Re-run resize now that strands exist
+resizeCanvas();
+
+function hexToRgb(hex) {
+  if (!hex || !hex.startsWith('#')) return { r: 184, g: 82, b: 53 };
+  const h = hex.replace('#','');
+  return {
+    r: parseInt(h.substring(0,2),16) || 184,
+    g: parseInt(h.substring(2,4),16) || 82,
+    b: parseInt(h.substring(4,6),16) || 53
+  };
+}
+
+function drawBackgroundSchema(time) {
+  const rect = heroWrapper.getBoundingClientRect();
+  const w = rect.width;
+  const h = rect.height;
+  const cx = w / 2;
+  const cy = h / 2;
+
+  ctx.clearRect(0, 0, w, h);
+
+  const terrRgb = hexToRgb(terracotta);
+  const ambRgb = hexToRgb(amber);
+
+  // Central Convergence Hub Glow
+  const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, 180);
+  glow.addColorStop(0, `rgba(${terrRgb.r},${terrRgb.g},${terrRgb.b},0.35)`);
+  glow.addColorStop(0.4, `rgba(${ambRgb.r},${ambRgb.g},${ambRgb.b},0.12)`);
+  glow.addColorStop(1, `rgba(${terrRgb.r},${terrRgb.g},${terrRgb.b},0)`);
+
+  ctx.fillStyle = glow;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 180, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Central Focal Point Node
+  ctx.fillStyle = terracotta;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Draw Strands
+  for (const s of strands) {
+    ctx.beginPath();
+    const startX = s.isLeft ? 0 : w;
+    const endX = cx;
+    const steps = 50;
+
+    for (let i = 0; i <= steps; i++) {
+      const progress = i / steps;
+      const currentX = startX + (endX - startX) * progress;
+      const funnel = Math.pow(1 - progress, 1.8);
+      const wave = Math.sin(progress * 8 + s.phase + time * s.speed) * s.amp * funnel;
+      const currentY = cy + (s.offsetY * funnel) + wave;
+
+      if (i === 0) ctx.moveTo(currentX, currentY);
+      else ctx.lineTo(currentX, currentY);
+    }
+
+    ctx.strokeStyle = `rgba(${terrRgb.r},${terrRgb.g},${terrRgb.b},${s.alpha})`;
+    ctx.lineWidth = s.width;
+    ctx.stroke();
+
+    // Signal Particles
+    const pProgress = (time * s.speed * 0.3 + s.phase * 0.1) % 1;
+    const px = startX + (endX - startX) * pProgress;
+    const pFunnel = Math.pow(1 - pProgress, 1.8);
+    const py = cy + (s.offsetY * pFunnel) + Math.sin(pProgress * 8 + s.phase + time * s.speed) * s.amp * pFunnel;
+
+    ctx.fillStyle = amber;
+    ctx.beginPath();
+    ctx.arc(px, py, 1.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function render(ts) {
+  drawBackgroundSchema(ts * 0.001);
+  if (!document.hidden) {
+    requestAnimationFrame(render);
+  } else {
+    // Resume when tab becomes visible again
+    document.addEventListener('visibilitychange', function resume() {
+      if (!document.hidden) {
+        document.removeEventListener('visibilitychange', resume);
+        requestAnimationFrame(render);
+      }
+    });
+  }
+}
+requestAnimationFrame(render);
+
+// ROTATING TAGLINE — 5s per rotation with fade + slide
+(function(){
+  const slot = document.getElementById('taglineSlot');
+  if (!slot) return;
+  const items = slot.querySelectorAll('.tagline-item');
+  if (items.length < 2) return;
+  let idx = 0;
+  setInterval(() => {
+    items[idx].classList.remove('active');
+    idx = (idx + 1) % items.length;
+    items[idx].classList.add('active');
+  }, 5000);
+})();
+
+// STRIKETHROUGH ROTATOR — 3s per rotation, cycles through what we're not
+(function(){
+  const slot = document.getElementById('strikeRotator');
+  if (!slot) return;
+  const words = slot.querySelectorAll('.strike-word');
+  if (words.length < 2) return;
+  let idx = 0;
+  setInterval(() => {
+    words[idx].classList.remove('active');
+    idx = (idx + 1) % words.length;
+    words[idx].classList.add('active');
+  }, 3000);
+})();
+
+// SECTION COLOR INVERSION — apply alternating .section-warm / .section-dark to chapter sections
+(function(){
+  // Target the .chapter sections that already exist below the hero
+  const chapters = document.querySelectorAll('.chapter, .section');
+  chapters.forEach((el, i) => {
+    // Skip if already tagged manually
+    if (el.classList.contains('section-warm') || el.classList.contains('section-dark')) return;
+    el.classList.add(i % 2 === 0 ? 'section-warm' : 'section-dark');
+  });
+})();
+</script>
+
+</body>
+</html>
