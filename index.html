@@ -1384,7 +1384,7 @@ for (let i = 0; i < STRAND_COUNT; i++) {
     offsetY: offsetY,
     amp: 15 + Math.random() * 55,       // reduced amplitude so waves stay within band
     phase: Math.random() * Math.PI * 2,
-    speed: 0.08 + Math.random() * 0.32,
+    speed: 0.2 + Math.random() * 0.6,
     width: 0.35 + Math.random() * 1.1,
     alpha: 0.025 + Math.random() * 0.13
   });
@@ -1493,7 +1493,7 @@ requestAnimationFrame(render);
     items[idx].classList.remove('active');
     idx = (idx + 1) % items.length;
     items[idx].classList.add('active');
-  }, 5000);
+  }, 2500);
 })();
 
 // STRIKETHROUGH ROTATOR — 3s per rotation, cycles through what we're not
@@ -1507,7 +1507,7 @@ requestAnimationFrame(render);
     words[idx].classList.remove('active');
     idx = (idx + 1) % words.length;
     words[idx].classList.add('active');
-  }, 3000);
+  }, 1500);
 })();
 
 // SECTION COLOR INVERSION — apply alternating .section-warm / .section-dark to chapter sections
